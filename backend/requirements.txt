@@ -1,0 +1,25 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+python-dotenv
+
+# LLM & RAG
+openai
+langchain==0.1.9
+langchain-openai==0.0.8
+langchain-community==0.0.24
+langchain-text-splitters==0.0.1
+faiss-cpu
+pypdf==4.0.2
+tiktoken==0.5.2
+
+# 数据处理
+pandas
+numpy
+openpyxl
+
+# 工具
+httpx
+aiofiles

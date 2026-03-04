@@ -1,28 +1,55 @@
-# Angular specific
-/dist/
-/out-tsc/
-/tmp/
-/coverage/
-/e2e/test-output/
-/.angular/
-.angular/
+# ===== 环境变量（含 API Key，禁止提交）=====
+.env
+.env.local
+.env.*.local
 
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
+# ===== 前端 =====
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/npm-debug.log*
+frontend/*.tsbuildinfo
 
-# Environment files
-/.env
+# ===== 后端 =====
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/.venv/
+backend/venv/
+# 向量库索引（体积大，各环境自行生成）
+backend/data/faiss_index/
+backend/data/chroma/
+# 文档元数据（运行时生成）
+backend/data/documents.json
 
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
+# ===== Python 通用 =====
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
 
-# TypeScript cache
-*.tsbuildinfo
+# ===== Docker =====
+# 不忽略 docker-compose.yml，需要提交
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+
+# ===== 日志 =====
+*.log
+logs/
