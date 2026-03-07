@@ -19,6 +19,7 @@ export const api = {
     stockData: (symbol: string, type: string) =>
       `${BASE_URL}/api/case2/data/${symbol}?data_type=${type}`,
     exampleQueries: `${BASE_URL}/api/case2/example-queries`,
+    promptTemplates: `${BASE_URL}/api/case2/prompt-templates`,
   },
 
   // 案例3：投研全流程
@@ -28,6 +29,7 @@ export const api = {
     score: `${BASE_URL}/api/case3/score`,
     report: `${BASE_URL}/api/case3/report`,
     sampleCompanies: `${BASE_URL}/api/case3/sample-companies`,
+    promptTemplates: `${BASE_URL}/api/case3/prompt-templates`,
   },
 };
 

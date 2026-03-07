@@ -35,7 +35,7 @@ NEXT_PUBLIC_API_BASE_URL=http://你的服务器IP:8000
 
 ```bash
 cd backend
-pip install pandas numpy
+pip install -r .\requirements.txt
 python data/generate_mock_data.py
 cd ..
 ```

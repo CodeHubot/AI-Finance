@@ -1,14 +1,63 @@
 """案例2：金融数据分析服务"""
 import json
-import os
 from pathlib import Path
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Optional
 
 import pandas as pd
 
 from services.llm_client import get_llm_client, get_model_name
 
 DATA_DIR = Path(__file__).parent.parent / "data"
+
+# ── 默认提示词模板（{变量名} 为占位符，运行时自动替换）─────────────────────
+DEFAULT_CHART_PROMPT = """\
+你是一位专业的金融数据分析师。用户提出了以下分析需求：
+
+"{query}"
+
+可用股票列表（JSON）：
+{stock_info}
+
+历史数据样本（含价格与财务数据）：
+{data_sample}
+
+请分析用户需求，返回一个 JSON 对象，包含以下字段：
+1. "analysis_type"：分析类型（trend / comparison / distribution / correlation 之一）
+2. "companies"：涉及的公司名称列表
+3. "metrics"：分析的核心指标（如 revenue / profit / price / pe_ratio / pb_ratio / roe 等）
+4. "time_range"：时间范围描述
+5. "chart_config"：完整的 ECharts option 配置对象（含 title / xAxis / yAxis / series 等）
+6. "chart_title"：图表标题
+
+对于 chart_config，请基于数据样本生成真实合理的金融数据来制作图表，数据需符合实际市场情况。
+只返回 JSON，不要有其他文字。"""
+
+DEFAULT_REPORT_PROMPT = """\
+基于以下金融分析结果，生成一份专业的数据分析报告：
+
+用户问题：{query}
+分析类型：{analysis_type}
+涉及公司：{companies}
+分析指标：{metrics}
+时间范围：{time_range}
+
+请用 Markdown 格式输出报告，包含以下章节：
+
+## 分析摘要
+（2-3 句话概括核心发现）
+
+## 数据解读
+（详细分析图表数据，找出关键趋势和规律，引用具体数据支撑）
+
+## 投资启示
+（基于数据分析给出客观的投资参考建议，须注明风险）
+
+## 风险提示
+（列出 3-4 条相关风险因素）
+
+语言要专业、客观，数据引用要具体。"""
+
+# ──────────────────────────────────────────────────────────────────────────────
 
 
 def get_available_stocks() -> list:
@@ -35,12 +84,34 @@ def load_stock_data(symbol: str, data_type: str = "price") -> pd.DataFrame:
     return pd.DataFrame()
 
 
-async def analyze_with_nl(query: str) -> AsyncGenerator[dict, None]:
+def get_prompt_templates() -> dict:
+    """返回案例2默认提示词模板及变量说明"""
+    return {
+        "chart_prompt": DEFAULT_CHART_PROMPT,
+        "report_prompt": DEFAULT_REPORT_PROMPT,
+        "variables": {
+            "chart_prompt": [
+                {"name": "query", "desc": "用户输入的自然语言分析需求"},
+                {"name": "stock_info", "desc": "可用股票列表（JSON 数组）"},
+                {"name": "data_sample", "desc": "实际财务/价格数据样本（前 3000 字符）"},
+            ],
+            "report_prompt": [
+                {"name": "query", "desc": "用户原始问题"},
+                {"name": "analysis_type", "desc": "AI 解析出的分析类型"},
+                {"name": "companies", "desc": "涉及的公司列表"},
+                {"name": "metrics", "desc": "分析的财务指标"},
+                {"name": "time_range", "desc": "时间范围"},
+            ],
+        },
+    }
+
+
+async def analyze_with_nl(
+    query: str, custom_prompts: Optional[dict] = None
+) -> AsyncGenerator[dict, None]:
     """自然语言金融分析，返回图表配置和报告"""
     stocks = get_available_stocks()
     stock_info = json.dumps(stocks, ensure_ascii=False)
-
-    stocks_dict = {s["symbol"]: s["name"] for s in stocks}
 
     # 加载相关数据
     all_data = {}
@@ -50,32 +121,28 @@ async def analyze_with_nl(query: str) -> AsyncGenerator[dict, None]:
         if not price_df.empty:
             all_data[s["name"]] = {
                 "price": price_df.tail(30).to_dict(orient="records"),
-                "financial": financial_df.tail(8).to_dict(orient="records") if not financial_df.empty else [],
+                "financial": (
+                    financial_df.tail(8).to_dict(orient="records")
+                    if not financial_df.empty
+                    else []
+                ),
             }
 
     data_summary = json.dumps(all_data, ensure_ascii=False, default=str)
 
+    templates = get_prompt_templates()
+    chart_template = (custom_prompts or {}).get("chart_prompt") or templates["chart_prompt"]
+    report_template = (custom_prompts or {}).get("report_prompt") or templates["report_prompt"]
+
     client = get_llm_client()
 
-    # 第一步：解析查询意图并生成图表
-    parse_prompt = f"""你是一位专业的金融数据分析师。用户提出了以下分析需求：
-
-"{query}"
-
-可用股票列表：{stock_info}
-
-部分数据样本：{data_summary[:3000]}
-
-请分析用户需求，返回一个JSON对象，包含以下字段：
-1. "analysis_type": 分析类型（trend/comparison/distribution/correlation 之一）
-2. "companies": 涉及的公司列表
-3. "metrics": 分析指标（revenue/profit/price/pe_ratio/pb_ratio 等）
-4. "time_range": 时间范围描述
-5. "chart_config": ECharts 图表配置对象（完整的 option 对象）
-6. "chart_title": 图表标题
-
-对于 chart_config，请生成真实、合理的金融数据来制作图表。数据要符合实际市场情况。
-只返回 JSON，不要有其他文字。"""
+    # 第一步：解析查询意图并生成图表配置
+    parse_prompt = (
+        chart_template
+        .replace("{query}", query)
+        .replace("{stock_info}", stock_info)
+        .replace("{data_sample}", data_summary[:3000])
+    )
 
     chart_response = await client.chat.completions.create(
         model=get_model_name(),
@@ -88,28 +155,14 @@ async def analyze_with_nl(query: str) -> AsyncGenerator[dict, None]:
     yield {"type": "chart", "data": chart_data}
 
     # 第二步：生成分析报告（流式）
-    report_prompt = f"""基于以下分析结果，请生成一份专业的金融数据分析报告：
-
-用户问题：{query}
-分析类型：{chart_data.get("analysis_type")}
-涉及公司：{chart_data.get("companies")}
-分析指标：{chart_data.get("metrics")}
-时间范围：{chart_data.get("time_range")}
-
-请用 Markdown 格式输出报告，包含以下部分：
-## 分析摘要
-（2-3句话概括核心发现）
-
-## 数据解读
-（详细分析图表数据，找出关键趋势和规律）
-
-## 投资启示
-（基于数据分析给出客观的投资参考建议，需注明风险）
-
-## 风险提示
-（相关风险因素）
-
-语言要专业、客观，数据引用要具体。"""
+    report_prompt = (
+        report_template
+        .replace("{query}", query)
+        .replace("{analysis_type}", str(chart_data.get("analysis_type", "")))
+        .replace("{companies}", str(chart_data.get("companies", [])))
+        .replace("{metrics}", str(chart_data.get("metrics", [])))
+        .replace("{time_range}", str(chart_data.get("time_range", "")))
+    )
 
     stream = await client.chat.completions.create(
         model=get_model_name(),

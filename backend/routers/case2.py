@@ -1,5 +1,6 @@
 """案例2：金融数据分析路由"""
 import json
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -12,12 +13,19 @@ router = APIRouter()
 
 class AnalyzeRequest(BaseModel):
     query: str
+    custom_prompts: Optional[dict] = None
 
 
 @router.get("/stocks")
 async def get_stocks():
     """获取可分析的股票列表"""
     return {"stocks": analysis_service.get_available_stocks()}
+
+
+@router.get("/prompt-templates")
+async def get_prompt_templates():
+    """获取案例2提示词模板"""
+    return analysis_service.get_prompt_templates()
 
 
 @router.post("/analyze")
@@ -27,7 +35,9 @@ async def analyze(request: AnalyzeRequest):
         raise HTTPException(status_code=400, detail="查询内容不能为空")
 
     async def event_stream():
-        async for chunk in analysis_service.analyze_with_nl(request.query):
+        async for chunk in analysis_service.analyze_with_nl(
+            request.query, request.custom_prompts
+        ):
             yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(

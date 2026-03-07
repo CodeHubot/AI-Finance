@@ -1,6 +1,6 @@
 """案例3：投研全流程服务"""
 import json
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Optional
 
 from services.llm_client import get_llm_client, get_model_name
 
@@ -13,33 +13,179 @@ COMPANY_DB = {
     "比亚迪": {"industry": "新能源汽车", "market_cap": "0.8万亿", "pe": 22.1, "pb": 4.5},
 }
 
+# ── 默认提示词模板（{company} 为占位符，运行时自动替换）──────────────────────
 
-async def generate_industry_chain(company: str) -> dict:
-    """生成产业链图谱数据"""
-    client = get_llm_client()
-
-    prompt = f"""分析"{company}"的产业链结构，返回一个JSON对象，格式如下：
-{{
+DEFAULT_INDUSTRY_CHAIN_PROMPT = """\
+分析"{company}"的产业链结构，返回一个 JSON 对象，格式如下：
+{
   "company": "{company}",
   "upstream": [
-    {{"name": "上游供应商类别1", "examples": ["公司A", "公司B"], "dependency": "高/中/低"}},
-    ...（3-4个上游）
+    {"name": "上游供应商类别1", "examples": ["公司A", "公司B"], "dependency": "高/中/低"},
+    {"name": "上游供应商类别2", "examples": ["公司C", "公司D"], "dependency": "高/中/低"},
+    （共 3-4 个上游节点）
   ],
-  "core": {{
+  "core": {
     "name": "{company}",
     "products": ["核心产品1", "核心产品2"],
-    "core_competency": "核心竞争力描述"
-  }},
+    "core_competency": "核心竞争力描述（2 句话）"
+  },
   "downstream": [
-    {{"name": "下游客户类别1", "examples": ["客户A", "客户B"], "market_size": "市场规模"}},
-    ...（3-4个下游）
+    {"name": "下游客户类别1", "examples": ["客户A", "客户B"], "market_size": "市场规模"},
+    （共 3-4 个下游节点）
   ],
   "competitors": [
-    {{"name": "竞争对手", "position": "行业地位描述"}}
+    {"name": "竞争对手名称", "position": "行业地位描述"}
   ],
-  "industry_trend": "行业发展趋势（2-3句话）"
-}}
-只返回JSON，数据要专业准确。"""
+  "industry_trend": "行业发展趋势（2-3 句话）"
+}
+只返回 JSON，数据要专业准确，符合 {company} 的实际情况。"""
+
+DEFAULT_INFO_SUMMARY_PROMPT = """\
+为"{company}"生成一份模拟的多源信息聚合摘要，返回 JSON：
+{
+  "announcements": [
+    {"date": "2024-01-xx", "title": "公告标题", "summary": "摘要内容（2 句话）", "sentiment": "positive/neutral/negative"},
+    {"date": "2024-01-xx", "title": "公告标题", "summary": "摘要内容", "sentiment": "positive/neutral/negative"},
+    {"date": "2024-01-xx", "title": "公告标题", "summary": "摘要内容", "sentiment": "positive/neutral/negative"}
+  ],
+  "research_reports": [
+    {"date": "2024-0x-xx", "institution": "券商名称", "rating": "买入/增持/中性/减持", "target_price": "目标价（元）", "key_points": ["核心观点1", "核心观点2"]},
+    {"date": "2024-0x-xx", "institution": "券商名称", "rating": "买入/增持/中性/减持", "target_price": "目标价（元）", "key_points": ["核心观点1", "核心观点2"]},
+    {"date": "2024-0x-xx", "institution": "券商名称", "rating": "买入/增持/中性/减持", "target_price": "目标价（元）", "key_points": ["核心观点1", "核心观点2"]}
+  ],
+  "news_sentiment": [
+    {"date": "2024-xx-xx", "source": "来源", "title": "新闻标题", "sentiment_score": 0.75, "sentiment_label": "正面/中性/负面"},
+    （共 5 条新闻）
+  ],
+  "overall_sentiment": {
+    "score": 0.70,
+    "label": "积极/中性/消极",
+    "summary": "整体舆情概述（2 句话）"
+  }
+}
+数据要符合 {company} 的实际经营情况，时间为最近 3 个月内。只返回 JSON。"""
+
+DEFAULT_SCORE_PROMPT = """\
+对"{company}"进行专业的投研综合评分，返回 JSON：
+{
+  "company": "{company}",
+  "scores": {
+    "盈利能力": {
+      "score": 85,
+      "rationale": "评分理由（1-2 句话）",
+      "key_metrics": ["ROE: xx%", "净利润率: xx%"]
+    },
+    "成长性": {
+      "score": 75,
+      "rationale": "评分理由",
+      "key_metrics": ["营收增速: xx%", "利润增速: xx%"]
+    },
+    "财务健康": {
+      "score": 80,
+      "rationale": "评分理由",
+      "key_metrics": ["资产负债率: xx%", "流动比率: x.x"]
+    },
+    "竞争优势": {
+      "score": 90,
+      "rationale": "评分理由",
+      "key_metrics": ["市占率: xx%", "品牌价值: xx 亿"]
+    },
+    "估值合理性": {
+      "score": 65,
+      "rationale": "评分理由",
+      "key_metrics": ["PE: xx 倍", "PB: x.x 倍"]
+    },
+    "ESG 评级": {
+      "score": 72,
+      "rationale": "评分理由",
+      "key_metrics": ["ESG 评级: A/B/C", "碳排放: 持平/下降"]
+    }
+  },
+  "total_score": 78,
+  "investment_rating": "强烈推荐/推荐/中性/谨慎/回避",
+  "summary": "综合评价（3-4 句话，客观专业）"
+}
+评分要有区分度，基于 {company} 的实际情况，只返回 JSON。"""
+
+DEFAULT_REPORT_PROMPT = """\
+请基于以下数据，生成一份专业的 A 股投研报告（Markdown 格式）：
+
+{context}
+
+报告格式如下（必须包含所有章节）：
+
+# {company} 投研报告
+
+## 投资评级：[评级] | 目标价：[价格]
+
+> **核心观点**：[2 句话核心结论]
+
+---
+
+## 一、公司概况
+[公司基本面介绍，100 字]
+
+## 二、产业链分析
+[上中下游分析，150 字]
+
+## 三、近期动态
+### 3.1 重要公告
+[列出 2-3 条关键公告]
+
+### 3.2 研究机构观点
+[汇总 2-3 家机构观点]
+
+### 3.3 舆情分析
+[舆情整体判断，50 字]
+
+## 四、财务分析
+| 指标 | 数值 | 行业均值 | 评价 |
+|------|------|----------|------|
+[列出 6 个核心财务指标]
+
+## 五、综合评分
+
+| 维度 | 评分 | 说明 |
+|------|------|------|
+[列出 6 个评分维度]
+
+**综合评分：[总分]/100**
+
+## 六、风险提示
+[列出 3-4 个具体风险因素]
+
+## 七、投资建议
+[明确的投资建议，100 字，结尾必须注明"本报告仅供参考，不构成投资建议。"]
+
+---
+*报告生成时间：2025 年 | AI 辅助生成，仅供教学参考*"""
+
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def get_prompt_templates() -> dict:
+    """返回案例3默认提示词模板及变量说明"""
+    return {
+        "industry_chain": DEFAULT_INDUSTRY_CHAIN_PROMPT,
+        "info_summary": DEFAULT_INFO_SUMMARY_PROMPT,
+        "score": DEFAULT_SCORE_PROMPT,
+        "report": DEFAULT_REPORT_PROMPT,
+        "variables": {
+            "common": [{"name": "company", "desc": "目标公司名称（所有模块通用）"}],
+            "report_extra": [
+                {"name": "context", "desc": "产业链/信息摘要/评分汇总数据（系统自动填充）"}
+            ],
+        },
+    }
+
+
+async def generate_industry_chain(
+    company: str, custom_prompt: Optional[str] = None
+) -> dict:
+    """生成产业链图谱数据"""
+    client = get_llm_client()
+    prompt_template = custom_prompt or DEFAULT_INDUSTRY_CHAIN_PROMPT
+    prompt = prompt_template.replace("{company}", company)
 
     response = await client.chat.completions.create(
         model=get_model_name(),
@@ -47,35 +193,16 @@ async def generate_industry_chain(company: str) -> dict:
         temperature=0.3,
         response_format={"type": "json_object"},
     )
-
     return json.loads(response.choices[0].message.content)
 
 
-async def generate_info_summary(company: str) -> dict:
+async def generate_info_summary(
+    company: str, custom_prompt: Optional[str] = None
+) -> dict:
     """生成多源信息摘要（公告/研报/舆情）"""
     client = get_llm_client()
-
-    prompt = f"""为"{company}"生成一份模拟的多源信息聚合摘要，返回JSON：
-{{
-  "announcements": [
-    {{"date": "2024-01-xx", "title": "公告标题", "summary": "摘要内容", "sentiment": "positive/neutral/negative"}},
-    ...（3条最新公告）
-  ],
-  "research_reports": [
-    {{"date": "2024-0x-xx", "institution": "券商名称", "rating": "买入/增持/中性/减持", "target_price": "目标价", "key_points": ["核心观点1", "核心观点2"]}},
-    ...（3份研报）
-  ],
-  "news_sentiment": [
-    {{"date": "2024-xx-xx", "source": "来源", "title": "新闻标题", "sentiment_score": 0.0-1.0之间的数, "sentiment_label": "正面/中性/负面"}},
-    ...（5条新闻）
-  ],
-  "overall_sentiment": {{
-    "score": 0.0-1.0之间的数,
-    "label": "积极/中性/消极",
-    "summary": "整体舆情概述（2句话）"
-  }}
-}}
-数据要符合该公司实际情况，时间为最近3个月内。只返回JSON。"""
+    prompt_template = custom_prompt or DEFAULT_INFO_SUMMARY_PROMPT
+    prompt = prompt_template.replace("{company}", company)
 
     response = await client.chat.completions.create(
         model=get_model_name(),
@@ -83,54 +210,16 @@ async def generate_info_summary(company: str) -> dict:
         temperature=0.5,
         response_format={"type": "json_object"},
     )
-
     return json.loads(response.choices[0].message.content)
 
 
-async def generate_company_score(company: str) -> dict:
+async def generate_company_score(
+    company: str, custom_prompt: Optional[str] = None
+) -> dict:
     """生成企业评分（雷达图数据）"""
     client = get_llm_client()
-
-    prompt = f"""对"{company}"进行专业的投研评分，返回JSON：
-{{
-  "company": "{company}",
-  "scores": {{
-    "盈利能力": {{
-      "score": 0-100之间整数,
-      "rationale": "评分理由（1句话）",
-      "key_metrics": ["ROE: xx%", "净利润率: xx%"]
-    }},
-    "成长性": {{
-      "score": 0-100之间整数,
-      "rationale": "评分理由",
-      "key_metrics": ["营收增速: xx%", "利润增速: xx%"]
-    }},
-    "财务健康": {{
-      "score": 0-100之间整数,
-      "rationale": "评分理由",
-      "key_metrics": ["资产负债率: xx%", "流动比率: x.x"]
-    }},
-    "竞争优势": {{
-      "score": 0-100之间整数,
-      "rationale": "评分理由",
-      "key_metrics": ["市占率: xx%", "品牌价值: xx亿"]
-    }},
-    "估值合理性": {{
-      "score": 0-100之间整数,
-      "rationale": "评分理由",
-      "key_metrics": ["PE: xx倍", "PB: x.x倍"]
-    }},
-    "ESG评级": {{
-      "score": 0-100之间整数,
-      "rationale": "评分理由",
-      "key_metrics": ["ESG评级: A/B/C", "碳排放强度: 持平/下降"]
-    }}
-  }},
-  "total_score": 0-100之间整数（加权平均）,
-  "investment_rating": "强烈推荐/推荐/中性/谨慎/回避",
-  "summary": "综合评价（3-4句话，要客观专业）"
-}}
-基于该公司实际情况评分，要有区分度。只返回JSON。"""
+    prompt_template = custom_prompt or DEFAULT_SCORE_PROMPT
+    prompt = prompt_template.replace("{company}", company)
 
     response = await client.chat.completions.create(
         model=get_model_name(),
@@ -138,11 +227,16 @@ async def generate_company_score(company: str) -> dict:
         temperature=0.3,
         response_format={"type": "json_object"},
     )
-
     return json.loads(response.choices[0].message.content)
 
 
-async def generate_research_report(company: str, industry_chain: dict, summary: dict, score: dict) -> AsyncGenerator[str, None]:
+async def generate_research_report(
+    company: str,
+    industry_chain: dict,
+    summary: dict,
+    score: dict,
+    custom_prompt: Optional[str] = None,
+) -> AsyncGenerator[str, None]:
     """一键生成标准投研报告（流式）"""
     client = get_llm_client()
 
@@ -153,57 +247,12 @@ async def generate_research_report(company: str, industry_chain: dict, summary: 
 评分数据：{json.dumps(score, ensure_ascii=False)[:1000]}
 """
 
-    prompt = f"""请基于以下数据，生成一份专业的A股投研报告（Markdown格式）：
-
-{context}
-
-报告格式如下（必须包含所有章节）：
-
-# {company} 投研报告
-
-## 投资评级：[评级] | 目标价：[价格]
-
-> **核心观点**：[2句话核心结论]
-
----
-
-## 一、公司概况
-[公司基本面介绍，100字]
-
-## 二、产业链分析
-[上中下游分析，150字]
-
-## 三、近期动态
-### 3.1 重要公告
-[列出2-3条关键公告]
-
-### 3.2 研究机构观点
-[汇总2-3家机构观点]
-
-### 3.3 舆情分析
-[舆情整体判断，50字]
-
-## 四、财务分析
-| 指标 | 数值 | 行业均值 | 评价 |
-|------|------|----------|------|
-[列出6个核心财务指标]
-
-## 五、综合评分
-
-| 维度 | 评分 | 说明 |
-|------|------|------|
-[列出6个评分维度]
-
-**综合评分：[总分]/100**
-
-## 六、风险提示
-[列出3-4个具体风险因素]
-
-## 七、投资建议
-[明确的投资建议，100字，结尾必须注明"本报告仅供参考，不构成投资建议。"]
-
----
-*报告生成时间：2025年 | AI辅助生成，仅供教学参考*"""
+    prompt_template = custom_prompt or DEFAULT_REPORT_PROMPT
+    prompt = (
+        prompt_template
+        .replace("{company}", company)
+        .replace("{context}", context)
+    )
 
     stream = await client.chat.completions.create(
         model=get_model_name(),

@@ -1,5 +1,6 @@
 """案例3：投研全流程路由"""
 import json
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -12,6 +13,21 @@ router = APIRouter()
 
 class ResearchRequest(BaseModel):
     company: str
+    custom_prompt: Optional[str] = None
+
+
+class FullResearchRequest(BaseModel):
+    company: str
+    industry_chain: dict
+    summary: dict
+    score: dict
+    custom_prompt: Optional[str] = None
+
+
+@router.get("/prompt-templates")
+async def get_prompt_templates():
+    """获取案例3提示词模板"""
+    return research_service.get_prompt_templates()
 
 
 @router.post("/industry-chain")
@@ -19,7 +35,9 @@ async def get_industry_chain(request: ResearchRequest):
     """获取产业链图谱数据"""
     if not request.company.strip():
         raise HTTPException(status_code=400, detail="公司名称不能为空")
-    data = await research_service.generate_industry_chain(request.company)
+    data = await research_service.generate_industry_chain(
+        request.company, request.custom_prompt
+    )
     return data
 
 
@@ -28,7 +46,9 @@ async def get_info_summary(request: ResearchRequest):
     """获取多源信息摘要"""
     if not request.company.strip():
         raise HTTPException(status_code=400, detail="公司名称不能为空")
-    data = await research_service.generate_info_summary(request.company)
+    data = await research_service.generate_info_summary(
+        request.company, request.custom_prompt
+    )
     return data
 
 
@@ -37,15 +57,10 @@ async def get_company_score(request: ResearchRequest):
     """获取企业评分数据"""
     if not request.company.strip():
         raise HTTPException(status_code=400, detail="公司名称不能为空")
-    data = await research_service.generate_company_score(request.company)
+    data = await research_service.generate_company_score(
+        request.company, request.custom_prompt
+    )
     return data
-
-
-class FullResearchRequest(BaseModel):
-    company: str
-    industry_chain: dict
-    summary: dict
-    score: dict
 
 
 @router.post("/report")
@@ -60,6 +75,7 @@ async def generate_report(request: FullResearchRequest):
             industry_chain=request.industry_chain,
             summary=request.summary,
             score=request.score,
+            custom_prompt=request.custom_prompt,
         ):
             yield f"data: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
