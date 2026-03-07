@@ -23,8 +23,10 @@ import {
   Code2,
   RotateCcw,
   Info,
+  FileDown,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { exportMarkdownToPdf } from "@/lib/export-pdf";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -672,19 +674,27 @@ export default function Case3Page() {
                         ) : "报告生成完成"}
                       </p>
                       {!loading.report && (
-                        <button
-                          onClick={() => {
-                            const blob = new Blob([data.report], { type: "text/markdown" });
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = `${company}_投研报告.md`;
-                            a.click();
-                          }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs text-gray-300 transition-colors"
-                        >
-                          <Download size={12} />导出 Markdown
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => exportMarkdownToPdf(data.report, `${company}_投研报告`)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600/80 hover:bg-red-500 rounded-lg text-xs text-white transition-colors"
+                          >
+                            <FileDown size={12} />导出 PDF
+                          </button>
+                          <button
+                            onClick={() => {
+                              const blob = new Blob([data.report], { type: "text/markdown" });
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = `${company}_投研报告.md`;
+                              a.click();
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs text-gray-300 transition-colors"
+                          >
+                            <Download size={12} />导出 Markdown
+                          </button>
+                        </div>
                       )}
                     </div>
                     <div className="markdown-body">
@@ -708,7 +718,7 @@ export default function Case3Page() {
                   <p className="text-xs text-gray-400 leading-relaxed">
                     本平台投研分析分为 <strong className="text-white">4 个模块</strong>，每个模块都会独立调用大模型。
                     在这里你可以查看并自定义每个模块的提示词，点击「开始投研」后 AI 将使用修改后的提示词生成结果。
-                    <br />尝试修改：评分提示词中增加"重点关注 ESG"，或报告提示词中要求"使用更保守的语言"，对比结果差异。
+                    <br />尝试修改：评分提示词中增加&ldquo;重点关注 ESG&rdquo;，或报告提示词中要求&ldquo;使用更保守的语言&rdquo;，对比结果差异。
                   </p>
                 </div>
 

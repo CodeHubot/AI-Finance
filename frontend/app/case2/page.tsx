@@ -20,8 +20,10 @@ import {
   Eye,
   Code2,
   Table2,
+  FileDown,
 } from "lucide-react";
 import { api, streamFetch } from "@/lib/api";
+import { exportMarkdownToPdf } from "@/lib/export-pdf";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -559,6 +561,14 @@ export default function Case2Page() {
                   <h3 className="text-sm font-semibold text-white">AI 分析报告</h3>
                   {result.isLoading && (
                     <span className="inline-block w-1 h-4 bg-emerald-400 cursor-blink ml-1 align-text-bottom" />
+                  )}
+                  {!result.isLoading && result.report && (
+                    <button
+                      onClick={() => exportMarkdownToPdf(result.report, "金融数据分析报告")}
+                      className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-red-600/80 hover:bg-red-500 rounded-lg text-xs text-white transition-colors"
+                    >
+                      <FileDown size={12} />导出 PDF
+                    </button>
                   )}
                 </div>
                 <div className="markdown-body">
