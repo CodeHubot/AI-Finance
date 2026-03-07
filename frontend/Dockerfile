@@ -20,6 +20,8 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+# public 目录可能为空，用 || true 避免目录不存在时报错
+RUN mkdir -p ./public
 COPY --from=builder /app/public ./public
 
 EXPOSE 3000
