@@ -23,7 +23,6 @@ const cases = [
     ],
     tags: ["LangChain", "RAG", "ChromaDB", "流式输出"],
     difficulty: "进阶",
-    duration: "90 分钟",
   },
   {
     id: 2,
@@ -45,7 +44,6 @@ const cases = [
     ],
     tags: ["ECharts", "Pandas", "NL2SQL", "报告生成"],
     difficulty: "基础",
-    duration: "60 分钟",
   },
   {
     id: 3,
@@ -67,7 +65,6 @@ const cases = [
     ],
     tags: ["投研", "评分模型", "雷达图", "报告导出"],
     difficulty: "综合",
-    duration: "120 分钟",
   },
 ];
 
@@ -184,8 +181,6 @@ export default function HomePage() {
                 <div className="flex items-center justify-between pt-4 border-t border-gray-800">
                   <div className="flex gap-3 text-xs text-gray-500">
                     <span>难度：{c.difficulty}</span>
-                    <span>·</span>
-                    <span>{c.duration}</span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-400 group-hover:text-white transition-colors">
                     <span>进入案例</span>
