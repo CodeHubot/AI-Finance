@@ -31,6 +31,40 @@ export const api = {
     sampleCompanies: `${BASE_URL}/api/case3/sample-companies`,
     promptTemplates: `${BASE_URL}/api/case3/prompt-templates`,
   },
+
+  // 案例4：智能营销文案生成
+  case4: {
+    generate: `${BASE_URL}/api/case4/generate`,
+    platforms: `${BASE_URL}/api/case4/platforms`,
+  },
+
+  // 案例5：社交媒体舆情洞察
+  case5: {
+    sampleData: `${BASE_URL}/api/case5/sample-data`,
+    analyze: `${BASE_URL}/api/case5/analyze`,
+  },
+
+  // 案例6：智能推荐与用户分层
+  case6: {
+    users: `${BASE_URL}/api/case6/users`,
+    products: `${BASE_URL}/api/case6/products`,
+    segments: `${BASE_URL}/api/case6/segments`,
+    recommend: `${BASE_URL}/api/case6/recommend`,
+  },
+
+  // 案例7：数字人直播导购助手
+  case7: {
+    products: `${BASE_URL}/api/case7/products`,
+    knowledge: `${BASE_URL}/api/case7/knowledge`,
+    chat: `${BASE_URL}/api/case7/chat`,
+  },
+
+  // 案例8：营销数据决策智能体
+  case8: {
+    dashboard: `${BASE_URL}/api/case8/dashboard`,
+    exampleQueries: `${BASE_URL}/api/case8/example-queries`,
+    query: `${BASE_URL}/api/case8/query`,
+  },
 };
 
 export async function streamFetch(
