@@ -345,7 +345,7 @@ export default function Case13Page() {
                             <div>
                               <p className="text-gray-500 mb-1">??????</p>
                               {q.expected_responses.map((r, j) => (
-                                <p key={j} className="text-gray-300">· {r}</p>
+                                <p key={j} className="text-gray-300">ï¿½ {r}</p>
                               ))}
                             </div>
                             <div>

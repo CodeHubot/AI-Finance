@@ -51,7 +51,7 @@ const GRADE_COLORS: Record<string, string> = {
   优秀: "text-emerald-400 bg-emerald-400/10 border-emerald-400/30",
   良好: "text-blue-400 bg-blue-400/10 border-blue-400/30",
   中等: "text-amber-400 bg-amber-400/10 border-amber-400/30",
-  待提�? "text-rose-400 bg-rose-400/10 border-rose-400/30",
+  待提�? "text-rose-400 bg-rose-400/10 border-rose-400/30",
 };
 
 const SCORE_COLOR = (score: number, full: number) => {
@@ -109,7 +109,7 @@ export default function Case9Page() {
     if (!content.trim()) return;
     setGrading(true);
     setResult(null);
-    setProgress({ step: "初始化批改引�?..", percent: 5 });
+    setProgress({ step: "初始化批改引�?..", percent: 5 });
     try {
       await streamFetch(
         api.case9.grade(),
@@ -147,8 +147,8 @@ export default function Case9Page() {
               <BookOpen className="w-4 h-4" />
             </div>
             <div>
-              <h1 className="text-sm font-semibold">案例 9：智能作业批改系�?/h1>
-              <p className="text-xs text-gray-400">AI 驱动的个性化作业评估与反�?/p>
+              <h1 className="text-sm font-semibold">案例 9：智能作业批改系�?/h1>
+              <p className="text-xs text-gray-400">AI 驱动的个性化作业评估与反�?/p>
             </div>
           </div>
           <div className="ml-auto flex gap-2 text-xs text-gray-500">
@@ -218,7 +218,7 @@ export default function Case9Page() {
 
           {/* Sample selector */}
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-            <p className="text-xs text-gray-400 mb-2">快速加载示例作�?/p>
+            <p className="text-xs text-gray-400 mb-2">快速加载示例作�?/p>
             <div className="flex flex-wrap gap-2">
               {(config?.samples || []).map((s, i) => (
                 <button
@@ -246,19 +246,19 @@ export default function Case9Page() {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="在此粘贴学生的作业内�?.."
+              placeholder="在此粘贴学生的作业内�?.."
               rows={10}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"
             />
             <div className="flex items-center justify-between mt-3">
-              <span className="text-xs text-gray-500">{content.length} �?/span>
+              <span className="text-xs text-gray-500">{content.length} �?/span>
               <button
                 onClick={handleGrade}
                 disabled={grading || !content.trim()}
                 className="px-5 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-2 transition-all"
               >
                 {grading ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
-                {grading ? "AI批改�?.." : "开始智能批�?}
+                {grading ? "AI批改�?.." : "开始智能批�?}
               </button>
             </div>
           </div>
@@ -285,7 +285,7 @@ export default function Case9Page() {
           {!result && !grading && (
             <div className="bg-gray-900 rounded-xl border border-gray-800 p-8 text-center h-full flex flex-col items-center justify-center gap-3">
               <BookOpen className="w-12 h-12 text-gray-700" />
-              <p className="text-gray-500 text-sm">填写作业信息并点击「开始智能批改�?/p>
+              <p className="text-gray-500 text-sm">填写作业信息并点击「开始智能批改�?/p>
               <p className="text-gray-600 text-xs">AI 将从多个维度评分，提供个性化改进建议</p>
             </div>
           )}
@@ -372,7 +372,7 @@ export default function Case9Page() {
               {result.errors.length > 0 && (
                 <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
                   <h3 className="text-xs font-semibold text-amber-400 mb-2 flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> 错误与批�?
+                    <AlertCircle className="w-3.5 h-3.5" /> 错误与批�?
                   </h3>
                   <div className="space-y-3">
                     {result.errors.map((e, i) => (
@@ -382,7 +382,7 @@ export default function Case9Page() {
                           <span className="text-xs text-gray-400">位置：{e.location}</span>
                         </div>
                         <p className="text-xs text-gray-300 mb-1">{e.explanation}</p>
-                        <p className="text-xs text-emerald-400">�?{e.correction}</p>
+                        <p className="text-xs text-emerald-400">�?{e.correction}</p>
                       </div>
                     ))}
                   </div>
