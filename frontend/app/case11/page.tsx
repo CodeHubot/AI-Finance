@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft, PenTool, Loader2, Clock, Users, BookOpen,
+  ArrowLeft, PenTool, Loader2, Users, BookOpen,
   ChevronRight, Lightbulb, FileText, Star,
 } from "lucide-react";
 import { api, streamFetch } from "@/lib/api";

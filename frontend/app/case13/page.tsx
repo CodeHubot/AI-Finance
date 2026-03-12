@@ -267,7 +267,7 @@ export default function Case13Page() {
                   <p className="text-xs text-cyan-300">💡 {answerResult.hint}</p>
                   <div className="bg-gray-900 rounded p-2">
                     <p className="text-xs text-gray-400 mb-0.5">教师示范回应：</p>
-                    <p className="text-xs text-white italic">"{answerResult.teacher_response}"</p>
+                    <p className="text-xs text-white italic">&ldquo;{answerResult.teacher_response}&rdquo;</p>
                   </div>
                 </div>
               )}
