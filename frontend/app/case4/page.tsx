@@ -301,7 +301,7 @@ export default function Case4Page() {
                   </div>
                 )}
 
-                {platformVariants(activeTab).map((v, idx) => {
+                {platformVariants(activeTab).map((v) => {
                   const cardId = `${v.platform}-${v.variant}`;
                   const platform = PLATFORMS.find((p) => p.key === v.platform)!;
                   return (
