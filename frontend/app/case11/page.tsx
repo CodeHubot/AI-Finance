@@ -65,7 +65,7 @@ export default function Case11Page() {
   const [samples, setSamples] = useState<SampleTopic[]>([]);
   const [subject, setSubject] = useState("数学");
   const [grade, setGrade] = useState("高中一年级");
-  const [topic, setTopic] = useState("函数的单调性");
+  const [topic, setTopic] = useState("函数的单调�?);
   const [duration, setDuration] = useState(45);
   const [objectives, setObjectives] = useState("");
   const [classDesc, setClassDesc] = useState("");
@@ -92,14 +92,14 @@ export default function Case11Page() {
   const handleDesign = async () => {
     setLoading(true);
     setResult(null);
-    setProgress({ step: "初始化...", percent: 5 });
+    setProgress({ step: "初始�?..", percent: 5 });
     try {
       await streamFetch(
         api.case11.design(),
         { subject, grade, topic, duration, objectives, class_description: classDesc },
         (data) => {
-          if (data.type === "progress") setProgress({ step: data.step, percent: data.percent });
-          else if (data.type === "done") { setResult(data.data); setProgress(null); setActiveTab("flow"); }
+          if (data.type === "progress") setProgress({ step: data.step as string, percent: data.percent as number });
+          else if (data.type === "done") { setResult(data.data as LessonResult); setProgress(null); setActiveTab("flow"); }
         }
       );
     } finally {
@@ -117,14 +117,14 @@ export default function Case11Page() {
               <PenTool className="w-4 h-4" />
             </div>
             <div>
-              <h1 className="text-sm font-semibold">案例 11：智能教学设计助手</h1>
+              <h1 className="text-sm font-semibold">案例 11：智能教学设计助�?/h1>
               <p className="text-xs text-gray-400">一键生成完整教案，解放教师创造力</p>
             </div>
           </div>
           <div className="ml-auto flex gap-2 text-xs text-gray-500">
-            <span className="px-2 py-1 rounded bg-gray-800">提示词工程</span>
+            <span className="px-2 py-1 rounded bg-gray-800">提示词工�?/span>
             <span className="px-2 py-1 rounded bg-gray-800">教学设计</span>
-            <span className="px-2 py-1 rounded bg-gray-800">差异化教学</span>
+            <span className="px-2 py-1 rounded bg-gray-800">差异化教�?/span>
           </div>
         </div>
       </div>
@@ -150,7 +150,7 @@ export default function Case11Page() {
             </div>
             <div>
               <label className="text-xs text-gray-400 mb-1 block">课题名称</label>
-              <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="例：函数的单调性"
+              <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="例：函数的单调�?
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500" />
             </div>
             <div>
@@ -167,7 +167,7 @@ export default function Case11Page() {
             <div>
               <label className="text-xs text-gray-400 mb-1 block">教学目标（可选）</label>
               <textarea value={objectives} onChange={(e) => setObjectives(e.target.value)} rows={2}
-                placeholder="例：掌握函数单调性的定义，能判断并证明函数单调性"
+                placeholder="例：掌握函数单调性的定义，能判断并证明函数单调�?
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 resize-none" />
             </div>
             <div>
@@ -178,13 +178,13 @@ export default function Case11Page() {
             <button onClick={handleDesign} disabled={loading || !topic.trim()}
               className="w-full py-2.5 rounded-lg bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 disabled:opacity-40 text-sm font-medium flex items-center justify-center gap-2 transition-all">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <PenTool className="w-4 h-4" />}
-              {loading ? "设计中..." : "一键生成教学设计"}
+              {loading ? "设计�?.." : "一键生成教学设�?}
             </button>
           </div>
 
           {/* Sample topics */}
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-            <p className="text-xs text-gray-400 mb-2">快速示例</p>
+            <p className="text-xs text-gray-400 mb-2">快速示�?/p>
             <div className="space-y-1.5">
               {samples.map((s, i) => (
                 <button key={i} onClick={() => loadSample(s)}
@@ -267,9 +267,9 @@ export default function Case11Page() {
                   {[
                     { key: "flow", label: "教学流程" },
                     { key: "questions", label: "课堂讨论" },
-                    { key: "exercises", label: "练习题" },
+                    { key: "exercises", label: "练习�? },
                     { key: "homework", label: "作业" },
-                    { key: "diff", label: "差异化" },
+                    { key: "diff", label: "差异�? },
                   ].map((tab) => (
                     <button key={tab.key} onClick={() => setActiveTab(tab.key)}
                       className={`flex-1 py-2.5 text-xs font-medium transition-all ${activeTab === tab.key ? "bg-gray-800 text-amber-400" : "text-gray-500 hover:text-gray-300"}`}>
@@ -330,12 +330,12 @@ export default function Case11Page() {
                       {result.exercises.map((ex, i) => (
                         <div key={i} className="bg-gray-800/60 rounded-lg p-3">
                           <span className={`text-xs px-2 py-0.5 rounded mb-2 inline-block ${ex.type === "基础" ? "bg-blue-500/20 text-blue-400" : ex.type === "提高" ? "bg-purple-500/20 text-purple-400" : "bg-rose-500/20 text-rose-400"}`}>
-                            {ex.type}题
+                            {ex.type}�?
                           </span>
                           <p className="text-sm text-white mb-2">{ex.content}</p>
                           <div className="grid grid-cols-2 gap-2">
                             <div className="bg-gray-900 rounded p-2">
-                              <p className="text-xs text-gray-500">参考答案</p>
+                              <p className="text-xs text-gray-500">参考答�?/p>
                               <p className="text-xs text-gray-300">{ex.answer}</p>
                             </div>
                             <div className="bg-gray-900 rounded p-2">
@@ -372,15 +372,15 @@ export default function Case11Page() {
                   {activeTab === "diff" && (
                     <div className="space-y-3">
                       <div className="bg-amber-900/20 border border-amber-800/40 rounded-lg p-3">
-                        <p className="text-xs text-amber-400 mb-1 flex items-center gap-1"><Users className="w-3 h-3" /> 针对学困生</p>
+                        <p className="text-xs text-amber-400 mb-1 flex items-center gap-1"><Users className="w-3 h-3" /> 针对学困�?/p>
                         <p className="text-sm text-gray-300">{result.differentiation.for_struggling}</p>
                       </div>
                       <div className="bg-emerald-900/20 border border-emerald-800/40 rounded-lg p-3">
-                        <p className="text-xs text-emerald-400 mb-1 flex items-center gap-1"><Star className="w-3 h-3" /> 针对优等生</p>
+                        <p className="text-xs text-emerald-400 mb-1 flex items-center gap-1"><Star className="w-3 h-3" /> 针对优等�?/p>
                         <p className="text-sm text-gray-300">{result.differentiation.for_advanced}</p>
                       </div>
                       <div className="bg-gray-800/60 rounded-lg p-3">
-                        <p className="text-xs text-gray-400 mb-2">课后反思提示</p>
+                        <p className="text-xs text-gray-400 mb-2">课后反思提�?/p>
                         {result.reflection_prompts.map((rp, i) => (
                           <p key={i} className="text-xs text-gray-300 flex items-center gap-1 mb-1">
                             <BookOpen className="w-3 h-3 text-gray-500" />{rp}
@@ -398,3 +398,4 @@ export default function Case11Page() {
     </div>
   );
 }
+

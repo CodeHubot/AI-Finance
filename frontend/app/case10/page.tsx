@@ -49,7 +49,7 @@ export default function Case10Page() {
   const [subject, setSubject] = useState("高中数学");
   const [currentLevel, setCurrentLevel] = useState("");
   const [weakTopics, setWeakTopics] = useState<string[]>([]);
-  const [goal, setGoal] = useState("高考数学达到140分以上");
+  const [goal, setGoal] = useState("高考数学达�?40分以�?);
   const [hoursPerWeek, setHoursPerWeek] = useState(10);
   const [weeks, setWeeks] = useState(12);
   const [loading, setLoading] = useState(false);
@@ -80,14 +80,14 @@ export default function Case10Page() {
   const handleGenerate = async () => {
     setLoading(true);
     setResult(null);
-    setProgress({ step: "初始化...", percent: 5 });
+    setProgress({ step: "初始�?..", percent: 5 });
     try {
       await streamFetch(
         api.case10.generate(),
         { subject, current_level: currentLevel, weak_topics: weakTopics, goal, hours_per_week: hoursPerWeek, weeks },
         (data) => {
-          if (data.type === "progress") setProgress({ step: data.step, percent: data.percent });
-          else if (data.type === "done") { setResult(data.data); setProgress(null); setActivePhase(0); }
+          if (data.type === "progress") setProgress({ step: data.step as string, percent: data.percent as number });
+          else if (data.type === "done") { setResult(data.data as PathResult); setProgress(null); setActivePhase(0); }
         }
       );
     } finally {
@@ -151,7 +151,7 @@ export default function Case10Page() {
             </div>
             <div>
               <label className="text-xs text-gray-400 mb-1 block">学习目标</label>
-              <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="例：高考数学达到140分"
+              <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="例：高考数学达�?40�?
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -163,17 +163,17 @@ export default function Case10Page() {
                 </div>
               </div>
               <div>
-                <label className="text-xs text-gray-400 mb-1 block">备考周期</label>
+                <label className="text-xs text-gray-400 mb-1 block">备考周�?/label>
                 <div className="flex items-center gap-2">
                   <input type="range" min={4} max={52} value={weeks} onChange={(e) => setWeeks(+e.target.value)} className="flex-1 accent-emerald-500" />
-                  <span className="text-sm text-emerald-400 w-8">{weeks}周</span>
+                  <span className="text-sm text-emerald-400 w-8">{weeks}�?/span>
                 </div>
               </div>
             </div>
             <button onClick={handleGenerate} disabled={loading || !subject}
               className="w-full py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 text-sm font-medium flex items-center justify-center gap-2 transition-all">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-              {loading ? "规划中..." : "生成个性化学习路径"}
+              {loading ? "规划�?.." : "生成个性化学习路径"}
             </button>
           </div>
 
@@ -193,16 +193,16 @@ export default function Case10Page() {
           {result && (
             <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
               <h3 className="text-xs font-semibold text-gray-300 mb-3 flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5 text-emerald-400" /> 知识模块优先级
+                <BookOpen className="w-3.5 h-3.5 text-emerald-400" /> 知识模块优先�?
               </h3>
               <div className="space-y-1.5">
                 {result.knowledge_map.slice(0, 8).map((node, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className={`text-xs px-1.5 py-0.5 rounded ${IMPORTANCE_COLOR[node.importance]}`}>
-                      {node.importance === "high" ? "高" : node.importance === "medium" ? "中" : "低"}
+                      {node.importance === "high" ? "�? : node.importance === "medium" ? "�? : "�?}
                     </span>
                     <span className="text-xs text-gray-300">{node.node}</span>
-                    {node.prerequisite && <span className="text-xs text-gray-600">← {node.prerequisite}</span>}
+                    {node.prerequisite && <span className="text-xs text-gray-600">�?{node.prerequisite}</span>}
                   </div>
                 ))}
               </div>
@@ -215,7 +215,7 @@ export default function Case10Page() {
           {!result && !loading && (
             <div className="bg-gray-900 rounded-xl border border-gray-800 p-8 text-center flex flex-col items-center gap-3 h-full justify-center">
               <Map className="w-12 h-12 text-gray-700" />
-              <p className="text-gray-500 text-sm">配置学情信息后，AI 将为你定制专属学习路径</p>
+              <p className="text-gray-500 text-sm">配置学情信息后，AI 将为你定制专属学习路�?/p>
             </div>
           )}
 
@@ -246,7 +246,7 @@ export default function Case10Page() {
                 {result.phases[activePhase] && (
                   <div className="p-5">
                     <div className={`inline-block px-3 py-1 rounded-lg bg-gradient-to-r ${PHASE_COLORS[activePhase % PHASE_COLORS.length]} text-xs font-medium mb-3`}>
-                      {result.phases[activePhase].phase_name} · {result.phases[activePhase].duration_weeks}周
+                      {result.phases[activePhase].phase_name} · {result.phases[activePhase].duration_weeks}�?
                     </div>
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
@@ -271,7 +271,7 @@ export default function Case10Page() {
                       </div>
                     </div>
                     <div className="bg-gray-800/60 rounded-lg p-3 mb-3">
-                      <p className="text-xs text-gray-400 mb-0.5">阶段里程碑</p>
+                      <p className="text-xs text-gray-400 mb-0.5">阶段里程�?/p>
                       <p className="text-sm text-emerald-300">{result.phases[activePhase].milestone}</p>
                     </div>
                     <div>
@@ -289,12 +289,12 @@ export default function Case10Page() {
               {/* Weekly schedule */}
               <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
                 <h3 className="text-xs font-semibold text-gray-300 mb-3 flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-emerald-400" /> 每周时间表模板
+                  <Calendar className="w-3.5 h-3.5 text-emerald-400" /> 每周时间表模�?
                 </h3>
                 <div className="space-y-2">
                   {[
-                    { label: "周一/三/五", value: result.weekly_schedule_template.mon_wed_fri },
-                    { label: "周二/四", value: result.weekly_schedule_template.tue_thu },
+                    { label: "周一/�?�?, value: result.weekly_schedule_template.mon_wed_fri },
+                    { label: "周二/�?, value: result.weekly_schedule_template.tue_thu },
                     { label: "周末", value: result.weekly_schedule_template.weekend },
                   ].map((item, i) => (
                     <div key={i} className="flex gap-3">
@@ -313,7 +313,7 @@ export default function Case10Page() {
                 <ul className="space-y-1.5">
                   {result.tips.map((t, i) => (
                     <li key={i} className="text-xs text-gray-300 flex items-start gap-2">
-                      <span className="text-emerald-500 mt-0.5">✦</span>{t}
+                      <span className="text-emerald-500 mt-0.5">�?/span>{t}
                     </li>
                   ))}
                 </ul>
@@ -325,3 +325,4 @@ export default function Case10Page() {
     </div>
   );
 }
+
