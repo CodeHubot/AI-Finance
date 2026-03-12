@@ -332,7 +332,7 @@ export default function HomePage() {
             <div className="flex items-center gap-3 mb-2">
               <div className="w-1 h-6 bg-gradient-to-b from-violet-500 to-pink-500 rounded-full" />
               <h2 className="text-lg font-bold text-white">AI 核心技术速览</h2>
-              <span className="text-xs px-2.5 py-1 rounded-full border bg-violet-500/8 border-violet-500/20 text-violet-400">12 个技术点</span>
+              <span className="text-xs px-2.5 py-1 rounded-full border bg-violet-500/8 border-violet-500/20 text-violet-400">13 个技术点</span>
               <div className="flex-1 h-px bg-gray-800" />
             </div>
             <p className="text-sm text-gray-500 pl-4">平台所有案例覆盖的关键 AI 技术，每个技术点含核心概念说明与在本平台的典型应用示例，可作为课前预习或课堂讲解的参考材料。</p>
@@ -340,6 +340,17 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
+              {
+                name: "LLM — 大语言模型",
+                en: "Large Language Model",
+                color: "border-fuchsia-500/30 bg-fuchsia-500/5",
+                badge: "bg-fuchsia-500/15 text-fuchsia-300",
+                icon: "🌐",
+                category: "基础底座",
+                summary: "大语言模型（LLM）是基于 Transformer 架构、在海量文本上预训练的超大规模神经网络，本质是一个「下一个词预测器」，但因规模效应涌现出强大的语言理解、逻辑推理、代码生成和知识运用能力。GPT-4、DeepSeek、Claude 等均属此类。平台中所有 13 个案例的核心驱动力均来自 LLM。",
+                keyPoints: ["核心机制：Transformer 自注意力 + 海量预训练", "调用方式：API 调用（无需本地部署训练）", "关键参数：temperature（随机性）、max_tokens（长度）、top_p"],
+                cases: ["全部案例"],
+              },
               {
                 name: "RAG — 检索增强生成",
                 en: "Retrieval-Augmented Generation",
