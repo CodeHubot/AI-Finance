@@ -65,6 +65,40 @@ export const api = {
     exampleQueries: `${BASE_URL}/api/case8/example-queries`,
     query: `${BASE_URL}/api/case8/query`,
   },
+
+  // 案例9：智能作业批改
+  case9: {
+    config: () => `${BASE_URL}/api/case9/config`,
+    sample: (i: number) => `${BASE_URL}/api/case9/sample/${i}`,
+    grade: () => `${BASE_URL}/api/case9/grade`,
+  },
+
+  // 案例10：个性化学习路径
+  case10: {
+    subjects: () => `${BASE_URL}/api/case10/subjects`,
+    generate: () => `${BASE_URL}/api/case10/generate`,
+  },
+
+  // 案例11：智能教学设计
+  case11: {
+    samples: () => `${BASE_URL}/api/case11/samples`,
+    design: () => `${BASE_URL}/api/case11/design`,
+  },
+
+  // 案例12：高校学术研究助手
+  case12: {
+    directions: () => `${BASE_URL}/api/case12/directions`,
+    sampleAbstracts: () => `${BASE_URL}/api/case12/sample-abstracts`,
+    analyze: () => `${BASE_URL}/api/case12/analyze`,
+    checkWriting: () => `${BASE_URL}/api/case12/check-writing`,
+  },
+
+  // 案例13：智慧课堂问答
+  case13: {
+    topics: () => `${BASE_URL}/api/case13/topics`,
+    generate: () => `${BASE_URL}/api/case13/generate`,
+    analyzeAnswer: () => `${BASE_URL}/api/case13/analyze-answer`,
+  },
 };
 
 export async function streamFetch(

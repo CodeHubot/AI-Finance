@@ -4,13 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from routers import case1, case2, case3, case4, case5, case6, case7, case8
+from routers import case9, case10, case11, case12, case13
 
 load_dotenv()
 
 app = FastAPI(
     title="AI 教学案例平台 - API",
-    description="支持金融+互联网营销共8个 AI 教学案例的后端服务",
-    version="2.0.0",
+    description="支持金融+互联网营销+教育共13个 AI 教学案例的后端服务",
+    version="3.0.0",
 )
 
 app.add_middleware(
@@ -29,6 +30,11 @@ app.include_router(case5.router, prefix="/api/case5", tags=["案例5 - 舆情洞
 app.include_router(case6.router, prefix="/api/case6", tags=["案例6 - 智能推荐"])
 app.include_router(case7.router, prefix="/api/case7", tags=["案例7 - 数字人导购"])
 app.include_router(case8.router, prefix="/api/case8", tags=["案例8 - 营销决策智能体"])
+app.include_router(case9.router, prefix="/api/case9", tags=["案例9 - 智能作业批改"])
+app.include_router(case10.router, prefix="/api/case10", tags=["案例10 - 个性化学习路径"])
+app.include_router(case11.router, prefix="/api/case11", tags=["案例11 - 智能教学设计"])
+app.include_router(case12.router, prefix="/api/case12", tags=["案例12 - 学术研究助手"])
+app.include_router(case13.router, prefix="/api/case13", tags=["案例13 - 智慧课堂问答"])
 
 
 @app.get("/")
@@ -44,6 +50,11 @@ async def root():
             {"id": 6, "name": "智能推荐与用户分层", "path": "/api/case6"},
             {"id": 7, "name": "数字人直播导购助手", "path": "/api/case7"},
             {"id": 8, "name": "营销数据决策智能体", "path": "/api/case8"},
+            {"id": 9, "name": "智能作业批改系统", "path": "/api/case9"},
+            {"id": 10, "name": "个性化学习路径规划", "path": "/api/case10"},
+            {"id": 11, "name": "智能教学设计助手", "path": "/api/case11"},
+            {"id": 12, "name": "高校学术研究助手", "path": "/api/case12"},
+            {"id": 13, "name": "智慧课堂问答系统", "path": "/api/case13"},
         ],
     }
 

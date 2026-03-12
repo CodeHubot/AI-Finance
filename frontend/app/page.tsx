@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   Brain, BarChart3, LineChart, ArrowRight, Sparkles, BookOpen, Users,
   Wand2, Radio, Users2, Video, BrainCircuit,
+  PenTool, Map, GraduationCap, MessageSquare, Star,
 } from "lucide-react";
 
 const FINANCE_CASES = [
@@ -83,9 +84,58 @@ const MARKETING_CASES = [
   },
 ];
 
+const EDUCATION_CASES = [
+  {
+    id: 9, href: "/case9", icon: BookOpen,
+    gradient: "from-indigo-600 to-blue-500", bgGlow: "bg-indigo-500/10",
+    borderColor: "border-indigo-500/30 hover:border-indigo-400/60", tagColor: "bg-indigo-500/20 text-indigo-300",
+    title: "智能作业批改系统", subtitle: "AI 评分量规 + 个性化反馈",
+    description: "将语文作文、数学解答、英语写作等作业上传至 AI，自动完成多维度评分、错误标注、亮点识别和个性化改进建议生成。",
+    features: ["多维度评分量规自动生成", "逐条错误批注与纠正", "个性化改进建议与参考要点"],
+    tags: ["评分量规", "个性化反馈", "多学科"], difficulty: "基础",
+  },
+  {
+    id: 10, href: "/case10", icon: Map,
+    gradient: "from-emerald-600 to-teal-500", bgGlow: "bg-emerald-500/10",
+    borderColor: "border-emerald-500/30 hover:border-emerald-400/60", tagColor: "bg-emerald-500/20 text-emerald-300",
+    title: "个性化学习路径规划", subtitle: "学情诊断 + 自适应学习地图",
+    description: "输入学科、当前水平、薄弱模块和目标，AI 自动诊断学情、规划分阶段学习路径、绘制知识图谱、给出每周时间表。",
+    features: ["AI 学情诊断与短板识别", "分阶段个性化学习计划", "知识模块优先级图谱"],
+    tags: ["学情分析", "知识图谱", "自适应学习"], difficulty: "进阶",
+  },
+  {
+    id: 11, href: "/case11", icon: PenTool,
+    gradient: "from-amber-600 to-orange-500", bgGlow: "bg-amber-500/10",
+    borderColor: "border-amber-500/30 hover:border-amber-400/60", tagColor: "bg-amber-500/20 text-amber-300",
+    title: "智能教学设计助手", subtitle: "一键生成完整教案方案",
+    description: "教师输入学科、年级、课题，AI 自动生成教学目标、教学流程（含设计意图）、讨论问题、练习题、差异化策略和板书设计。",
+    features: ["三维教学目标自动拆解", "环节化教学流程 + 设计意图", "差异化教学策略（学困生/优等生）"],
+    tags: ["教学设计", "差异化教学", "提示工程"], difficulty: "进阶",
+  },
+  {
+    id: 12, href: "/case12", icon: GraduationCap,
+    gradient: "from-purple-600 to-violet-500", bgGlow: "bg-purple-500/10",
+    borderColor: "border-purple-500/30 hover:border-purple-400/60", tagColor: "bg-purple-500/20 text-purple-300",
+    title: "高校学术研究助手", subtitle: "文献综述 + 论文写作辅导",
+    description: "研究生输入研究方向，AI 辅助完成文献全景梳理、研究空白识别、论文框架设计、研究方法选择，并提供学术写作规范检查。",
+    features: ["研究领域全景与空白分析", "论文章节框架自动生成", "学术写作规范智能检查"],
+    tags: ["文献综述", "论文框架", "学术写作"], difficulty: "综合",
+  },
+  {
+    id: 13, href: "/case13", icon: MessageSquare,
+    gradient: "from-cyan-600 to-sky-500", bgGlow: "bg-cyan-500/10",
+    borderColor: "border-cyan-500/30 hover:border-cyan-400/60", tagColor: "bg-cyan-500/20 text-cyan-300",
+    title: "智慧课堂问答系统", subtitle: "苏格拉底提问 + 即时评析",
+    description: "根据学科和知识点，AI 生成苏格拉底式递进问题序列、快速检测题、常见错误陷阱，并能即时分析学生回答给出教师反馈示例。",
+    features: ["苏格拉底式问题递进序列", "常见认知误区诊断题库", "学生回答即时 AI 评析"],
+    tags: ["苏格拉底提问", "即时反馈", "差异化问题"], difficulty: "基础",
+  },
+];
+
 const stats = [
-  { icon: BookOpen, label: "教学案例", value: "8" },
-  { icon: Sparkles, label: "AI 技术栈", value: "15+" },
+  { icon: BookOpen, label: "教学案例", value: "13" },
+  { icon: Sparkles, label: "AI 技术栈", value: "20+" },
+  { icon: Star, label: "覆盖行业", value: "3 大领域" },
   { icon: Users, label: "适合学生", value: "全阶段" },
 ];
 
@@ -144,7 +194,7 @@ export default function HomePage() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-400 text-sm font-medium mb-6">
             <Sparkles size={14} />
-            <span>AI 教学实验平台 · 金融 × 互联网营销</span>
+            <span>AI 教学实验平台 · 金融 × 营销 × 教育</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
             大模型赋能
@@ -152,7 +202,7 @@ export default function HomePage() {
             实战
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            8 大核心场景，覆盖金融与互联网营销双赛道
+            13 大核心场景，覆盖金融、互联网营销与教育三大赛道
             <br />
             手把手带你掌握 AI 产品开发全流程
           </p>
@@ -195,6 +245,20 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* 教育案例组 */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-6 bg-gradient-to-b from-indigo-500 to-cyan-500 rounded-full" />
+            <h2 className="text-lg font-bold text-white">教育行业案例</h2>
+            <span className="text-xs px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full">5 个案例</span>
+            <span className="text-xs px-2.5 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-full">中小学 + 高校</span>
+            <div className="flex-1 h-px bg-gray-800" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {EDUCATION_CASES.map((c) => <CaseCard key={c.id} c={c} />)}
+          </div>
+        </div>
+
         {/* 技术架构 */}
         <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8">
           <h3 className="text-lg font-semibold text-white mb-6 text-center">平台技术架构</h3>
@@ -215,7 +279,7 @@ export default function HomePage() {
         </div>
 
         <div className="text-center mt-10 text-gray-600 text-sm">
-          AI 教学案例平台 · 金融 × 互联网营销 · 仅供教学参考使用
+          AI 教学案例平台 · 金融 × 互联网营销 × 教育 · 仅供教学参考使用
         </div>
       </div>
     </div>
