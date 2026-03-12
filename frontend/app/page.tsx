@@ -326,6 +326,180 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* ── AI 核心技术速览 ── */}
+        <div className="mb-14">
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-violet-500 to-pink-500 rounded-full" />
+              <h2 className="text-lg font-bold text-white">AI 核心技术速览</h2>
+              <span className="text-xs px-2.5 py-1 rounded-full border bg-violet-500/8 border-violet-500/20 text-violet-400">12 个技术点</span>
+              <div className="flex-1 h-px bg-gray-800" />
+            </div>
+            <p className="text-sm text-gray-500 pl-4">平台所有案例覆盖的关键 AI 技术，每个技术点含核心概念说明与在本平台的典型应用示例，可作为课前预习或课堂讲解的参考材料。</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              {
+                name: "RAG — 检索增强生成",
+                en: "Retrieval-Augmented Generation",
+                color: "border-blue-500/30 bg-blue-500/5",
+                badge: "bg-blue-500/15 text-blue-300",
+                icon: "🔍",
+                category: "知识增强",
+                summary: "当 LLM 遇到知识边界时，RAG 通过「先检索、再生成」的范式来补强——将用户问题转化为向量，与知识库文档做语义相似度匹配，把最相关的段落注入提示词，让模型基于真实资料回答，有效抑制「幻觉」。",
+                keyPoints: ["向量化文档 → FAISS 索引 → 语义检索", "检索结果拼接到 Prompt 上下文", "回答附带来源引用，可溯源验证"],
+                cases: ["案例1", "案例7"],
+              },
+              {
+                name: "Prompt Engineering — 提示词工程",
+                en: "Prompt Engineering",
+                color: "border-amber-500/30 bg-amber-500/5",
+                badge: "bg-amber-500/15 text-amber-300",
+                icon: "✍️",
+                category: "基础技术",
+                summary: "不改变模型参数，仅通过精心设计输入指令来引导大模型输出符合预期的内容。核心技巧包括：角色设定（System Prompt）、任务分解（CoT）、格式约束（JSON Schema）、少样本示例（Few-shot）。",
+                keyPoints: ["角色设定（System Prompt）让模型扮演专家", "Few-shot 示例示范期望的输出格式", "思维链（CoT）引导逐步推理过程"],
+                cases: ["案例1", "案例4", "案例9", "案例11"],
+              },
+              {
+                name: "Embedding — 文本向量化",
+                en: "Text Embedding",
+                color: "border-emerald-500/30 bg-emerald-500/5",
+                badge: "bg-emerald-500/15 text-emerald-300",
+                icon: "📐",
+                category: "基础技术",
+                summary: "将文本映射到高维数值向量空间，语义相似的文本在向量空间中距离更近。这是语义搜索、用户分层、聚类分析的底层基础——计算机无法直接理解文字，但能高效计算向量之间的余弦相似度。",
+                keyPoints: ["相似文本 → 相近向量（余弦相似度）", "支撑 RAG 检索、用户聚类、语义搜索", "常用模型：text-embedding-ada-002、BGE"],
+                cases: ["案例1", "案例5", "案例6", "案例7"],
+              },
+              {
+                name: "NL2SQL — 自然语言转数据查询",
+                en: "Natural Language to SQL",
+                color: "border-teal-500/30 bg-teal-500/5",
+                badge: "bg-teal-500/15 text-teal-300",
+                icon: "💾",
+                category: "数据分析",
+                summary: "让非技术人员也能用自然语言与数据库「对话」。LLM 读取数据库的表结构说明，理解用户的自然语言问题，自动生成对应的 SQL 语句执行查询，并将结果转化为可读的分析报告或图表。",
+                keyPoints: ["输入表结构 Schema + 用户问题", "LLM 生成 SQL → 执行 → 返回结果", "结果二次解析生成自然语言报告"],
+                cases: ["案例2", "案例8"],
+              },
+              {
+                name: "情感分析 — Sentiment Analysis",
+                en: "Sentiment Analysis",
+                color: "border-rose-500/30 bg-rose-500/5",
+                badge: "bg-rose-500/15 text-rose-300",
+                icon: "💬",
+                category: "文本理解",
+                summary: "判断文本情感倾向（正面/负面/中性），并可进一步提取情感强度、具体议题、负面原因等细粒度信息。相比传统词典方法，LLM 能理解语境、反讽、隐晦表达，分析准确率显著提升。",
+                keyPoints: ["三分类：正面 / 负面 / 中性", "细粒度：提取情感强度与议题类别", "批量处理：数百条评论并发分析"],
+                cases: ["案例5"],
+              },
+              {
+                name: "语义聚类 — Semantic Clustering",
+                en: "Semantic Clustering",
+                color: "border-cyan-500/30 bg-cyan-500/5",
+                badge: "bg-cyan-500/15 text-cyan-300",
+                icon: "🗂️",
+                category: "数据分析",
+                summary: "先将文本 Embedding 为向量，再用 KMeans 等无监督算法自动将相似内容归入同一类别，无需预先定义标签。广泛用于舆情话题自动归类、用户行为分群、知识点自动整理。",
+                keyPoints: ["文本 → Embedding → KMeans 分群", "自动发现数据中的隐藏主题结构", "结合 LLM 自动为每个聚类命名"],
+                cases: ["案例5", "案例6"],
+              },
+              {
+                name: "Chain-of-Thought — 思维链推理",
+                en: "Chain-of-Thought Reasoning",
+                color: "border-violet-500/30 bg-violet-500/5",
+                badge: "bg-violet-500/15 text-violet-300",
+                icon: "🧠",
+                category: "推理增强",
+                summary: "在 Prompt 中要求模型「一步一步思考」或提供推理示例，使模型在回答前先生成中间推理步骤，显著提升复杂问题的准确率，并使 AI 的决策过程对人类可解释、可审查。",
+                keyPoints: ["「Let's think step by step」触发推理", "多步骤任务准确率提升 20-40%", "中间步骤可视化，决策过程透明"],
+                cases: ["案例8", "案例12"],
+              },
+              {
+                name: "Agent — 智能体",
+                en: "AI Agent / Function Calling",
+                color: "border-orange-500/30 bg-orange-500/5",
+                badge: "bg-orange-500/15 text-orange-300",
+                icon: "🤖",
+                category: "自动化",
+                summary: "赋予 LLM 调用外部工具（搜索引擎、数据库、API、代码执行器）的能力，使其能自主规划并执行多步骤任务。通过 Function Calling，LLM 判断何时调用哪个工具，并根据工具返回结果决定下一步行动。",
+                keyPoints: ["LLM 自主决定工具调用顺序", "Function Calling 标准化工具接口定义", "支持循环迭代直到完成目标任务"],
+                cases: ["案例3", "案例8"],
+              },
+              {
+                name: "流式输出 — Streaming / SSE",
+                en: "Server-Sent Events Streaming",
+                color: "border-sky-500/30 bg-sky-500/5",
+                badge: "bg-sky-500/15 text-sky-300",
+                icon: "⚡",
+                category: "工程实现",
+                summary: "LLM 生成内容时，通过 Server-Sent Events (SSE) 协议将每个生成的 token 实时推送到前端，实现「打字机效果」。相比等待全部生成完再显示，用户感知等待时间缩短 70% 以上，是 AI 产品的标准交互范式。",
+                keyPoints: ["后端 async generator → SSE 事件流", "前端 EventSource / fetch ReadableStream", "本平台所有 13 个案例均使用流式输出"],
+                cases: ["全部案例"],
+              },
+              {
+                name: "结构化输出 — JSON Schema",
+                en: "Structured Output",
+                color: "border-lime-500/30 bg-lime-500/5",
+                badge: "bg-lime-500/15 text-lime-300",
+                icon: "📋",
+                category: "工程实现",
+                summary: "通过 response_format 参数或 JSON Schema 约束，强制 LLM 输出可被程序直接解析的结构化 JSON 数据。这是 AI 与业务系统可靠集成的关键技术——将 LLM 变成结构化数据的生产者，而非仅仅是文本生成器。",
+                keyPoints: ["response_format: {type: 'json_object'}", "低温度（0.1-0.3）保证输出一致性", "配合 Pydantic 模型做字段校验"],
+                cases: ["案例9", "案例10", "案例11", "案例13"],
+              },
+              {
+                name: "Few-shot Learning — 少样本学习",
+                en: "Few-shot Prompting",
+                color: "border-pink-500/30 bg-pink-500/5",
+                badge: "bg-pink-500/15 text-pink-300",
+                icon: "📌",
+                category: "基础技术",
+                summary: "在 Prompt 中提供少量（通常 2-5 个）输入-输出示例，引导模型按照期望的格式、风格和逻辑输出。无需微调模型，即可让 LLM 快速适配特定任务，是成本最低的模型定制方式。",
+                keyPoints: ["示例数量 2-5 个通常最优", "示例质量比数量更重要", "与 Zero-shot 对比，格式遵循度提升明显"],
+                cases: ["案例4", "案例11"],
+              },
+              {
+                name: "知识图谱 — Knowledge Graph",
+                en: "Knowledge Graph",
+                color: "border-indigo-500/30 bg-indigo-500/5",
+                badge: "bg-indigo-500/15 text-indigo-300",
+                icon: "🕸️",
+                category: "知识增强",
+                summary: "以节点（实体/概念）和有向边（关系/依赖）描述领域知识的结构化网络。在教育场景中，知识图谱表示学科概念间的前置依赖关系，帮助 AI 规划合理的学习顺序（拓扑排序）；在金融场景中可表示公司间关联。",
+                keyPoints: ["节点 = 知识点/实体，边 = 依赖/关系", "拓扑排序确定学习先后顺序", "可用于 RAG 中的图检索增强"],
+                cases: ["案例10"],
+              },
+            ].map((tech) => (
+              <div key={tech.name} className={`rounded-xl border ${tech.color} p-4 transition-all hover:border-opacity-60`}>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{tech.icon}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${tech.badge}`}>{tech.category}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 justify-end">
+                    {tech.cases.map((c) => (
+                      <span key={c} className="text-xs text-gray-600 bg-gray-800 px-1.5 py-0.5 rounded">{c}</span>
+                    ))}
+                  </div>
+                </div>
+                <h3 className="text-sm font-bold text-white mb-0.5 leading-snug">{tech.name}</h3>
+                <p className="text-xs text-gray-500 mb-2 font-mono">{tech.en}</p>
+                <p className="text-xs text-gray-400 leading-relaxed mb-3">{tech.summary}</p>
+                <ul className="space-y-1">
+                  {tech.keyPoints.map((kp) => (
+                    <li key={kp} className="flex items-start gap-1.5 text-xs text-gray-500">
+                      <span className="text-gray-700 mt-0.5 shrink-0">›</span>{kp}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* 技术栈 + 学习路径 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
           {/* 技术栈 */}
