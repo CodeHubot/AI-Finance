@@ -3,7 +3,8 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# 使用 npmmirror 国内镜像
+RUN npm ci --registry=https://registry.npmmirror.com
 
 COPY . .
 
