@@ -27,12 +27,31 @@ cp .env.example .env
 ### 2. Docker 一键启动（推荐）
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
 访问：
-- 前端：http://localhost:3000
-- 后端 API：http://localhost:8000
+- 前端：http://localhost:28499
+
+> 后端服务运行在容器内网，不对外暴露端口。浏览器的所有 `/api/*` 请求由 Next.js 服务器自动代理转发到后端，无需额外配置。
+
+**国内服务器首次构建加速说明**
+
+Dockerfile 已内置阿里云镜像（apt / pip / npm），通常无需额外操作。若拉取基础镜像（`node:20-alpine` / `python:3.11-slim`）仍较慢，可配置 Docker Hub 镜像：
+
+```json
+// /etc/docker/daemon.json
+{
+  "registry-mirrors": [
+    "https://mirror.ccs.tencentyun.com",
+    "https://hub-mirror.c.163.com"
+  ]
+}
+```
+
+```bash
+systemctl restart docker
+```
 
 ### 3. 本地开发启动
 
@@ -40,7 +59,7 @@ docker compose up -d
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 
 # 生成模拟金融数据（首次运行）
 python data/generate_mock_data.py
@@ -53,16 +72,20 @@ python main.py
 
 ```bash
 cd frontend
-npm install
+npm install --registry=https://registry.npmmirror.com
 npm run dev
 ```
+
+本地开发时，Next.js dev server 会自动将 `/api/*` 请求代理到 `BACKEND_URL`（默认 `http://localhost:8000`），无需在 `.env` 中设置 `NEXT_PUBLIC_API_BASE_URL`。
 
 ## 技术架构
 
 ```
-前端 (Next.js 14 + TailwindCSS + ECharts)
-    ↓ HTTP / Server-Sent Events (SSE)
-后端 (Python FastAPI)
+浏览器
+    ↓ HTTP / SSE（端口 28499）
+前端容器 (Next.js 14 + TailwindCSS + ECharts)
+    ↓ /api/* rewrites 代理（容器内网，不对外暴露）
+后端容器 (Python FastAPI，端口 8000 仅内网)
     ├── 案例1：LangChain + ChromaDB (RAG)
     ├── 案例2：Pandas + 金融模拟数据
     └── 案例3：LLM 投研分析引擎
